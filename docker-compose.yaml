@@ -1,0 +1,32 @@
+---
+version: '3.8'
+services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    container_name: django-rest
+    volumes:
+      - ./:/usr/src/django-rest
+    ports:
+      - '8000:8000'
+    env_file:
+      - ./.env.dev
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=postgres
+      - POSTGRES_HOST=localhost
+      - POSTGRES_DB=snippets
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    networks:
+      - default
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    labels:
+      description: Postgresql Database
+      service: postgresql
+volumes:
+  postgres_data:
