@@ -1,4 +1,4 @@
-from models import Snippet
+from snippets.models import Snippet
 from rest_framework import serializers
 
 
