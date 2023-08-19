@@ -1,4 +1,4 @@
-FROM python:3.11.4-slim-buster
+FROM python:3.11.4
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -6,8 +6,12 @@ ENV PYTHONDONTWRITEBYTECODE 1
 WORKDIR /usr/src/django-rest
 
 RUN pip install --upgrade pip
-RUN pip freeze > requirements.txt
-RUN pip install -r requirements.txt
+COPY requirements.txt /tmp/
+RUN pip install --requirement /tmp/requirements.txt
 
 # copy project
 COPY . .
+
+EXPOSE 8000
+# ENTRYPOINT ["python", "manage.py"]
+# CMD ["runserver", "0.0.0.0:8000"]
