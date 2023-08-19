@@ -1,14 +1,14 @@
-from django.http import HttpResponse
-from django.shortcuts import render
-from django.urls import is_valid_path
+from django.http import HttpResponse, JsonResponse
 
 from snippets.models import Snippet
+from django.views.decorators.csrf import csrf_exempt
 from snippets.serializers import SnippetSerializer
 from rest_framework.parsers import JSONParser
 
 # Create your views here.
 
 
+@csrf_exempt
 def snippet_list(request):
     """
     List all code snippets, or create a new snippet
@@ -16,17 +16,18 @@ def snippet_list(request):
     if request.method == "GET":
         snippets = Snippet.objects.all()
         serializer = SnippetSerializer(snippets, many=True)
-        return HttpResponse(serializer.data, status=200)
+        return JsonResponse(serializer.data, safe=False)
 
     elif request.method == "POST":
-        data = JSONParser().parse(request.data)
+        data = JSONParser().parse(request)
         serializer = SnippetSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return HttpResponse(serializer.data, status=201)
+            return JsonResponse(serializer.data)
         return HttpResponse(serializer.error, status=400)
 
 
+@csrf_exempt
 def snippet_detail(request, pk):
     """Retrieve, update, delete a code snippet"""
 
@@ -37,13 +38,14 @@ def snippet_detail(request, pk):
 
     if request.method == "GET":
         serializer = SnippetSerializer(snippet)
-        return HttpResponse(serializer.data)
+        return JsonResponse(serializer.data)
 
     elif request.method == "PUT":
-        data = JSONParser().parse(request.data)
+        data = JSONParser().parse(request)
         serializer = SnippetSerializer(snippet, data=data)
         if serializer.is_valid():
-            return HttpResponse(serializer.data, status=204)
+            serializer.save()
+            return JsonResponse(serializer.data)
         return HttpResponse(serializer.errors, status=400)
 
     elif request.method == "DELETE":
