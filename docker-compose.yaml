@@ -23,7 +23,7 @@ services:
     networks:
       - default
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - ./data/db:/var/lib/postgresql/data/
     # env_file:
     #   - .postgres
     labels:
