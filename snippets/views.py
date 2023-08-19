@@ -1,12 +1,6 @@
-from django.http import Http404
-from rest_framework import status, mixins, generics
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from rest_framework.views import APIView
+from rest_framework import mixins, generics
 from snippets.models import Snippet
-from django.views.decorators.csrf import csrf_exempt
 from snippets.serializers import SnippetSerializer
-from rest_framework.parsers import JSONParser
 
 # Create your views here.
 
