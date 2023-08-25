@@ -44,7 +44,7 @@ services:
     restart: always
     build:
       context: .
-    command: celery -A server worker -l INFO
+    # command: celery -A server worker -l INFO
     depends_on:
       - postgres
       - redis
