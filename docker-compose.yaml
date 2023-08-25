@@ -1,16 +1,11 @@
 version: "3.8"
 services:
-  web:
-    build: .
-    command: python3 manage.py runserver 0.0.0.0:8000
-    container_name: django-rest
-    volumes:
-      - .:/django-rest
-    ports:
-      - "8000:8000"
-    depends_on:
-      - postgres
+  # Redis
+  redis:
+    image: redis
+    container_name: redis
 
+  # Postgres DB
   postgres:
     image: postgres:15
     container_name: postgres
@@ -31,5 +26,29 @@ services:
       service: postgresql
     ports:
       - "5433:5432"
+
+  # Django application
+  web:
+    build: .
+    command: python3 manage.py runserver 0.0.0.0:8000
+    container_name: django_app
+    volumes:
+      - .:/django-rest
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+
+  # Celery
+  celery:
+    restart: always
+    build:
+      context: .
+    command: celery -A server worker -l INFO
+    depends_on:
+      - postgres
+      - redis
+      - web
+
 volumes:
   postgres_data:
